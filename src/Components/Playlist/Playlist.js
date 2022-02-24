@@ -10,7 +10,7 @@ export class Playlist extends React.Component {
     }
     handleNameChange(e){
         let name = e.target.value;
-        this.props.onNameChange(name)
+        this.props.onNameChange(name);
     }
     render() {
         return (
@@ -18,7 +18,8 @@ export class Playlist extends React.Component {
             <input onChange={this.handleNameChange} value="New Playlist"/>
             <TrackList tracks={this.props.playlistTracks} 
                        onRemove={this.props.onRemove} 
-                       isRemoval='true'></TrackList>
+                       isRemoval="true"
+                       onPlay={this.props.onPlay}/>
 
             <button className="Playlist-save" 
                     onClick={this.props.onSave}>

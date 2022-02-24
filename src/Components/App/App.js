@@ -11,13 +11,16 @@ export class App extends React.Component {
     this.state = {
       searchResults: [],
       playlistName: 'My Playlist',
-      playlistTracks: []
+      playlistTracks: [],
+      trackPlaying: "",
+      playing: false
     };
     this.addTrack = this.addTrack.bind(this);
     this.removeTrack = this.removeTrack.bind(this);
     this.updatePlaylistName = this.updatePlaylistName.bind(this);
     this.savePlaylist = this.savePlaylist.bind(this);
     this.search = this.search.bind(this);
+    this.togglePlay = this.togglePlay.bind(this);
   }
 
   search(term){
@@ -50,6 +53,20 @@ export class App extends React.Component {
     tracks.push(track);
     this.setState({ playlistTracks: tracks });
   }
+  togglePlay(track){
+    
+    
+    if(this.state.trackPlaying && this.state.playing){
+      this.state.trackPlaying.pause();
+      this.setState({playing:false})
+    }else {
+      this.setState({trackPlaying: new Audio(track.preview)})
+      this.state.trackPlaying.play();
+      this.setState({playing:true})
+    }
+    console.log(this.state.playing)
+  }
+
 
   render(){
     
@@ -61,13 +78,16 @@ export class App extends React.Component {
         <div className="App-playlist">
             <SearchResults 
                   searchResults={this.state.searchResults} 
-                  onAdd={this.addTrack}/> 
+                  onAdd={this.addTrack}
+                  onPlay={this.togglePlay}
+                  /> 
 
             <Playlist onSave={this.savePlaylist} 
                       onNameChange={this.updatePlaylistName} 
                       playlistName={this.state.playlistName} 
                       playlistTracks={this.state.playlistTracks} 
-                      onRemove={this.removeTrack}/>
+                      onRemove={this.removeTrack}
+                      />
         </div>
       </div>
     </div>);

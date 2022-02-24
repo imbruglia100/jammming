@@ -23,33 +23,32 @@ const Spotify = {
     },
 
     async search(term){
-        const accessToken = Spotify.getAccessToken();
-        return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, {
+        const accessToken = await Spotify.getAccessToken();
+        try {
+        const response = await fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
-            }
-        }).then(
-            response => { 
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    console.log('API request failed');
+            }})
+
+            if(response.ok){
+                    const jsonResponse = await response.json();
+                    if(!jsonResponse.tracks) {
+                        return [];
                 }
-        }).then(
-            jsonResponse => {
-            if(!jsonResponse.tracks) {
-                return [];
+
+                return jsonResponse.tracks.items.map(track => ({
+                    id: track.id,
+                    name: track.name,
+                    artist: track.artists[0].name,
+                    album: track.album.name,
+                    uri: track.uri,
+                    cover: track.album.images[2].url,
+                    preview: track.preview_url
+                }));
             }
-            return jsonResponse.tracks.items.map(track => ({
-                id: track.id,
-                name: track.name,
-                artist: track.artists[0].name,
-                album: track.album.name,
-                uri: track.uri,
-                cover: track.album.images[2].url,
-                preview: track.preview_url
-            }));
-        });
+        }catch(e){
+            console.log(e);
+        }
     },
 
     async savePlaylist(playlistName, trackURIs){
